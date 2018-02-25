@@ -11,6 +11,7 @@ xyPlane = rootComp.xYConstructionPlane
 sketch = sketches.add(xyPlane)
 circles = sketch.sketchCurves.sketchCircles
 line = sketch.sketchCurves.sketchLines 
+# Test
 
 #Equivalent to a main method in java
 def run(context):
