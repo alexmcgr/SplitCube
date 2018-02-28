@@ -23,7 +23,7 @@ def run(context):
         ext = extrude(prof, dist)
         # Set third parameter to > 0 to cut on the XZ plane, and < 0 to cut on YZ plane 
         # If user input is ever implemented this would be a godd spot to add it
-        plane_value = -1
+        plane_value = 1
         # Distance does not change anything in split yet
         split(ext, dist, plane_value)
             
