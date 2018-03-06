@@ -1,23 +1,22 @@
 import adsk.core, adsk.fusion, adsk.cam, traceback
 app = adsk.core.Application.get()
 ui  = app.userInterface
-ui.messageBox('Split Cube')
 objColl = adsk.core.ObjectCollection.create()
-doc = app.documents.add(adsk.core.DocumentTypes.FusionDesignDocumentType)        
+doc = app.documents.add(adsk.core.DocumentTypes.FusionDesignDocumentType) 
 design = app.activeProduct
 rootComp = design.rootComponent
 sketches = rootComp.sketches
 xyPlane = rootComp.xYConstructionPlane
 sketch = sketches.add(xyPlane)
 circles = sketch.sketchCurves.sketchCircles
-line = sketch.sketchCurves.sketchLines 
+line = sketch.sketchCurves.sketchLines
 
 #Equivalent to a main method in java
 def run(context):
     ui = None
     try:
-        
-        dist = 5
+        dist = user_input('Enter a distance', 'Distance')
+        #dist = 5
         draw_rect(-2,-2,0,4,4,0, dist)
         prof = sketch.profiles.item(0)  
         ext = extrude(prof, dist)
@@ -75,4 +74,17 @@ def split(ext, distance, plane_value):
         if ui:
             ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))            
             
+def user_input(prompt, value):
+    ui = None
+    try:
+        app = adsk.core.Application.get()
+        ui  = app.userInterface
+        input = '1'
+        ui.inputBox(prompt, value, input)
+        input = int(input)
+        return input
+
+    except:
+        if ui:
+            ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))
             
