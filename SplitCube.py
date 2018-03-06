@@ -19,10 +19,11 @@ def run(context):
         #dist = 5
         draw_rect(-2,-2,0,4,4,0, dist)
         prof = sketch.profiles.item(0)  
+                
         ext = extrude(prof, dist)
         # Set third parameter to > 0 to cut on the XZ plane, and < 0 to cut on YZ plane 
         # If user input is ever implemented this would be a godd spot to add it
-        plane_value = 1
+        plane_value = user_input('Enter a positive value to split on the XZ plane, or a negative value for the YZ plane', 'Value')
         # Distance does not change anything in split yet
         split(ext, dist, plane_value)
             
@@ -77,13 +78,23 @@ def split(ext, distance, plane_value):
 def user_input(prompt, value):
     ui = None
     try:
+        '''
+        #has an issue that the input value does not update between so that is something to look at (Just uses the initial value for the return)
         app = adsk.core.Application.get()
         ui  = app.userInterface
         input = '1'
+        addCommandInput(prompt, value, input)
+        #input = int(input)
+        return input        
+        '''
+        #has an issue that the input value does not update between so that is something to look at (Just uses the initial value for the return)
+        app = adsk.core.Application.get()
+        ui  = app.userInterface
+        input = '2'
         ui.inputBox(prompt, value, input)
         input = int(input)
         return input
-
+        
     except:
         if ui:
             ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))
