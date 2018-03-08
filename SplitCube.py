@@ -91,9 +91,11 @@ def user_input(prompt, value):
         app = adsk.core.Application.get()
         ui  = app.userInterface
         input = '2'
-        ui.inputBox(prompt, value, input)
-        input = int(input)
-        return input
+        output = ui.inputBox(prompt, value, input)
+        output_string = output[0]        
+        print(output)
+        #input = int(input)
+        return int(output_string)
         
     except:
         if ui:
