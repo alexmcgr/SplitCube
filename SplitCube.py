@@ -93,8 +93,6 @@ def user_input(prompt, value):
         input = '2'
         output = ui.inputBox(prompt, value, input)
         output_string = output[0]        
-        print(output)
-        #input = int(input)
         return int(output_string)
         
     except:
