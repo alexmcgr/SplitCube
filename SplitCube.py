@@ -90,8 +90,8 @@ def user_input(prompt, value):
         #has an issue that the input value does not update between so that is something to look at (Just uses the initial value for the return)
         app = adsk.core.Application.get()
         ui  = app.userInterface
-        input = '2'
-        output = ui.inputBox(prompt, value, input)
+        inputValue = '4'
+        output = ui.inputBox(prompt, value, inputValue)
         output_string = output[0]        
         return int(output_string)
         
