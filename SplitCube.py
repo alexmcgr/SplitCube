@@ -19,17 +19,18 @@ def run(context):
         draw_rect(-2,-2,0,4,4,0, dist)
         prof = sketch.profiles.item(0)  
         ext = extrude(prof, dist)
-        plane_value = user_input('Enter a positive value to split on the XZ plane, or a negative value for the YZ plane', 'Value')
-        if plane_value > 0:
-            planes = rootComp.xZConstructionPlane
-        else:
-            planes = rootComp.yZConstructionPlane
-        planes = rootComp.constructionPlanes
-        planeInput = planes.createInput()
-        dist = user_input('Enter a distance like "5.0" or "3.0"', 'Distance')
-        planeOne = offset(planes, planeInput, prof, dist)            
-            
-        split(ext, dist, plane_value, planeOne)
+        splitPlaneChoice = user_input('Would you like to split the body? Enter a positive number for yes', 'Distance')
+        if splitPlaneChoice > 0:
+            plane_value = user_input('Enter a positive value to split on the XZ plane, or a negative value for the YZ plane', 'Value')
+            if plane_value > 0:
+                planes = rootComp.xZConstructionPlane
+            else:
+                planes = rootComp.yZConstructionPlane
+            planes = rootComp.constructionPlanes
+            planeInput = planes.createInput()
+            dist = user_input('Enter a distance for the plane cut (Starts at the middle of the object) ', 'Distance')
+            planeOne = offset(planes, planeInput, prof, dist)            
+            split(ext, dist, plane_value, planeOne)
             
     except:
         if ui:
@@ -89,22 +90,13 @@ def offset(planes, planeInput, prof, dist):
         if ui:
             ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))    
 
+#This function is what allows for the user input aspect of the script to work
 def user_input(prompt, value):
     ui = None
     try:
-        '''
-        #has an issue that the input value does not update between so that is something to look at (Just uses the initial value for the return)
         app = adsk.core.Application.get()
         ui  = app.userInterface
-        input = '1'
-        addCommandInput(prompt, value, input)
-        #input = int(input)
-        return input        
-        '''
-        #has an issue that the input value does not update between so that is something to look at (Just uses the initial value for the return)
-        app = adsk.core.Application.get()
-        ui  = app.userInterface
-        inputValue = '4'
+        inputValue = ''
         output = ui.inputBox(prompt, value, inputValue)
         output_string = output[0]        
         return int(output_string)
