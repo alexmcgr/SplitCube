@@ -16,27 +16,20 @@ def run(context):
     ui = None
     try:
         dist = user_input('Enter a distance', 'Distance')
-        #dist = 5
         draw_rect(-2,-2,0,4,4,0, dist)
         prof = sketch.profiles.item(0)  
-                
         ext = extrude(prof, dist)
-        # Set third parameter to > 0 to cut on the XZ plane, and < 0 to cut on YZ plane 
-        # If user input is ever implemented this would be a godd spot to add it
         plane_value = user_input('Enter a positive value to split on the XZ plane, or a negative value for the YZ plane', 'Value')
         if plane_value > 0:
-            plane = rootComp.xZConstructionPlane
+            planes = rootComp.xZConstructionPlane
         else:
-            plane = rootComp.yZConstructionPlane
-        # Distance does not change anything in split yet
+            planes = rootComp.yZConstructionPlane
         planes = rootComp.constructionPlanes
         planeInput = planes.createInput()
-
-        #dist = user_input('Enter a distance in the format "3.0" or "5.0"', 'Distance')        
-        
+        dist = user_input('Enter a distance like "5.0" or "3.0"', 'Distance')
         planeOne = offset(planes, planeInput, prof, dist)            
             
-        split(ext, dist, plane_value, plane, planeOne)
+        split(ext, dist, plane_value, planeOne)
             
     except:
         if ui:
@@ -69,7 +62,7 @@ def extrude(prof, dist):
             ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))
       
 #Splits a given body at a given distance
-def split(ext, distance, plane_value, plane, planeOne):
+def split(ext, distance, plane_value, planeOne):
     ui = None
     try:
         body = ext.bodies.item(0)
@@ -86,7 +79,8 @@ def split(ext, distance, plane_value, plane, planeOne):
 def offset(planes, planeInput, prof, dist):
     ui = None
     try:
-        offsetValue = adsk.core.ValueInput.createByReal(3.0)
+        offsetDistance = float(dist)
+        offsetValue = adsk.core.ValueInput.createByReal(offsetDistance)
         planeInput.setByOffset(prof, offsetValue)
         planeOne = planes.add(planeInput)        
         return planeOne
