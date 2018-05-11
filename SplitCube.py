@@ -24,8 +24,19 @@ def run(context):
         # Set third parameter to > 0 to cut on the XZ plane, and < 0 to cut on YZ plane 
         # If user input is ever implemented this would be a godd spot to add it
         plane_value = user_input('Enter a positive value to split on the XZ plane, or a negative value for the YZ plane', 'Value')
+        if plane_value > 0:
+            plane = rootComp.xZConstructionPlane
+        else:
+            plane = rootComp.yZConstructionPlane
         # Distance does not change anything in split yet
-        split(ext, dist, plane_value)
+        planes = rootComp.constructionPlanes
+        planeInput = planes.createInput()
+
+        #dist = user_input('Enter a distance in the format "3.0" or "5.0"', 'Distance')        
+        
+        planeOne = offset(planes, planeInput, prof, dist)            
+            
+        split(ext, dist, plane_value, plane, planeOne)
             
     except:
         if ui:
@@ -58,23 +69,32 @@ def extrude(prof, dist):
             ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))
       
 #Splits a given body at a given distance
-def split(ext, distance, plane_value):
+def split(ext, distance, plane_value, plane, planeOne):
     ui = None
     try:
-        if plane_value > 0:
-            plane = rootComp.xZConstructionPlane
-        else:
-            plane = rootComp.yZConstructionPlane
-        
         body = ext.bodies.item(0)
         splitBodyFeats = rootComp.features.splitBodyFeatures            
-        splitBodyInput = splitBodyFeats.createInput(body, plane, True)
+        splitBodyInput = splitBodyFeats.createInput(body, planeOne, True)
         splitBodyFeats.add(splitBodyInput)
         
     except:
         if ui:
             ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))            
             
+
+#This function will create an offset plane (Goal is to use this as a helper method for the split function)
+def offset(planes, planeInput, prof, dist):
+    ui = None
+    try:
+        offsetValue = adsk.core.ValueInput.createByReal(3.0)
+        planeInput.setByOffset(prof, offsetValue)
+        planeOne = planes.add(planeInput)        
+        return planeOne
+        
+    except:
+        if ui:
+            ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))    
+
 def user_input(prompt, value):
     ui = None
     try:
