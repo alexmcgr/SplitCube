@@ -16,21 +16,16 @@ def run(context):
     ui = None
     try:
         dist = user_input('Enter a distance', 'Distance')
-        draw_rect(-2,-2,0,4,4,0, dist)
+        draw_rect(0, 0, 0, dist, dist, 0, dist)
         prof = sketch.profiles.item(0)  
         ext = extrude(prof, dist)
         splitPlaneChoice = user_input('Would you like to split the body? Enter a positive number for yes', 'Distance')
         if splitPlaneChoice > 0:
-            plane_value = user_input('Enter a positive value to split on the XZ plane, or a negative value for the YZ plane', 'Value')
-            if plane_value > 0:
-                planes = rootComp.xZConstructionPlane
-            else:
-                planes = rootComp.yZConstructionPlane
+            planeChoice = 0
             planes = rootComp.constructionPlanes
             planeInput = planes.createInput()
-            dist = user_input('Enter a distance for the plane cut (Starts at the middle of the object) ', 'Distance')
-            planeOne = offset(planes, planeInput, prof, dist)            
-            split(ext, dist, plane_value, planeOne)
+            planeOne = offset(planes, planeInput, planeChoice)            
+            split(ext, dist, planeOne)
             
     except:
         if ui:
@@ -63,7 +58,7 @@ def extrude(prof, dist):
             ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))
       
 #Splits a given body at a given distance
-def split(ext, distance, plane_value, planeOne):
+def split(ext, distance, planeOne):
     ui = None
     try:
         body = ext.bodies.item(0)
@@ -77,12 +72,20 @@ def split(ext, distance, plane_value, planeOne):
             
 
 #This function will create an offset plane (Goal is to use this as a helper method for the split function)
-def offset(planes, planeInput, prof, dist):
+def offset(planes, planeInput, planeChoice):
     ui = None
     try:
+        plane_value = user_input('Enter a positive value to split on the XZ plane, a negative value for the YZ plane, and 0 for the XY plane', 'Value')
+        dist = user_input('Enter a distance for the plane cut', 'Distance')        
+        if plane_value > 0:
+            planeChoice = rootComp.xZConstructionPlane
+        elif plane_value == 0:
+            planeChoice = rootComp.xYConstructionPlane
+        else:
+            planeChoice = rootComp.yZConstructionPlane
         offsetDistance = float(dist)
         offsetValue = adsk.core.ValueInput.createByReal(offsetDistance)
-        planeInput.setByOffset(prof, offsetValue)
+        planeInput.setByOffset(planeChoice, offsetValue)
         planeOne = planes.add(planeInput)        
         return planeOne
         
@@ -96,7 +99,7 @@ def user_input(prompt, value):
     try:
         app = adsk.core.Application.get()
         ui  = app.userInterface
-        inputValue = ''
+        inputValue = '4'
         output = ui.inputBox(prompt, value, inputValue)
         output_string = output[0]        
         return int(output_string)
